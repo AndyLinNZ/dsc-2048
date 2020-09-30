@@ -21,6 +21,6 @@ We will also be recording and presenting a live workshop where you can follow al
 
 ## Sections
 
-* [Part 1 - Game logic design]()
+* [Part 1 - Game logic design](https://github.com/AndyLinNZ/dsc-2048/blob/master/Part1.md)
 * [Part 2 - Integrating the game with Flutter]()
 
