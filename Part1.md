@@ -34,6 +34,7 @@ For simplity, we will be using Visual Studio Code as our code editor for describ
 ## Stage 1: Initialising a board and creating tiles.
 
 ### Step 1: Initialise the game with a board and tile
+#### If you get stuck on any of the parts, you can check the code in lib/game.dart
 On the left you should see a lot of file directories and files. Right click on `lib` and create a new file called `game.dart`. Go inside `game.dart` and lets start coding.
 
 Our 2048 game will have a board, along with tiles on top of it, so it's best that we create classes to represent them.
@@ -295,7 +296,7 @@ void mergeRight(int r, int c) {
   }
 }
 ```
-EXERCISE: Can you do the same for mergeUp and mergeDown? Think about the dependency order of the direction.
+#### EXERCISE: Can you do the same for mergeUp and mergeDown? Think about the dependency order of the direction.
 #### Solutions:
 ```Dart
   void mergeUp(int r, int c) {
@@ -359,8 +360,8 @@ bool canMoveRight() {
   return false;
 }
 ```
-EXERCISE: Can you do the same for canMoveUp, canMoveDown?
-Solutions:
+#### EXERCISE: Can you do the same for canMoveUp, canMoveDown?
+#### Solutions:
 ```Dart
 // Add this to your code
     bool canMoveUp() {
@@ -404,8 +405,8 @@ void moveLeft() {
 }
 ```
 
-EXERCISE: Do the same for moveRight, moveUp and moveDown
-Solutions:
+#### EXERCISE: Do the same for moveRight, moveUp and moveDown
+#### Solutions:
 ```Dart
 // Add this to your code
 void moveRight() {
@@ -448,8 +449,9 @@ reset all the isMerged from all the Tiles because after we make a swipe we're in
 state and the Tiles can be merged again.
 First at the end of each move function, lets call the randomEmptyTile().
 Secondly, lets create a function to reset all the tiles back to isMerged = false.  
-EXERCISE: Implement the function resetMergeState() and add that function and randomEmptyTile() to all the move functions.  
-Solution:
+
+#### EXERCISE: Implement the function resetMergeState() and add that function and randomEmptyTile() to all the move functions.  
+#### Solution:
 ```Dart
 // Add this to your code
   void moveLeft() {
@@ -569,8 +571,8 @@ Finally, we want to know when our game is finished.
     }
   }
 ```
-EXERCISE: Implement a function bool gameOver(). HINT: Use previous functions. 
-Solution:
+#### EXERCISE: Implement a function bool gameOver(). HINT: Use previous functions. 
+#### Solution:
 ```Dart
   bool gameOver() {
     return !canMoveDown() && !canMoveLeft() && !canMoveRight() && !canMoveUp();
