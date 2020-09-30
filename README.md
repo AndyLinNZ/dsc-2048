@@ -3,6 +3,7 @@
 ## Introduction
 
 Welcome to our final project for DSC Unimelb's flutter workshop series! This project will be split into two workshops.
+
 Part 1 - Game logic design in dart.
 Part 2 - Integrating the game with Flutter.
 
