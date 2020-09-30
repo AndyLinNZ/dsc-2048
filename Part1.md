@@ -133,14 +133,17 @@ can be easily changed if we want different ratios.
 We want a function to create a certain number of Tiles with values that were initially empty tiles.
 So now we will create `randomEmptyTile(int count)` to generate random tiles with numbers on top for us. `count` will be the number of new random tiles we want to create.
 
+Our logic will be to find all the tiles on the board that are empty first. Then from all those empty tiles, randomly make 2 tiles not empty by giving them a value of either 2 or 4.
+
 ```Dart
+// Remember to import 'dart:math' show Random; at the top!
 // Add this to your code
 void randomEmptyTile(int count) {
     List<Tile> allEmptyTiles = List<Tile>();
     // Loop through all Tiles on the gameboard to find all the empty tiles
     for (int r = 0; r < row; r++) {
       for (int c = 0; c < column; c++) {
-        // If the tile is empty
+        // If the tile is empty, add it to our list of empty tiles
         if (gameBoard[r][c].isEmpty()) {
           allEmptyTiles.add(gameBoard[r][c]);
         }
@@ -162,7 +165,6 @@ void randomEmptyTile(int count) {
       allEmptyTiles.removeAt(randIndex);
     }
   }
-
 ```
 
 ### Step 4: Merging logic (Challenging!)
@@ -170,7 +172,7 @@ Now we are moving onto the merging functions. This is probably the hardest part 
 
 We consider a merge if there are two tiles, and one of the tiles has their values changed.
 Starting off with an example, swipe left from here:
-We want a loop that merges tiles in the dependency order left to right. i.e. merge b with a, then c with b then with a, then d with c then with b then with a.
+We want a loop that merges tiles in the dependency order left to right. i.e. merge `b` with `a`, then `c` with `b` then with `a`, then `d` with `c` then with `b` then with `a`.
 ```
 a b c d
 2 2 4 2
@@ -178,8 +180,8 @@ a b c d
 0 0 0 0 
 0 0 0 0
 ```
-Let a be the 1st row 1st column, let b be 1st row 2nd column, etc.
-We merge a and b together, so now a should become 4 and b should reset to 0. a was just merged, so it will have isMerged = true.
+Let `a` be the 1st row 1st column, let `b` be 1st row 2nd column, etc.
+We merge `a` and `b` together, so now `a` should become 4 and `b` should reset to 0. `a` was just merged, so it will have isMerged = true.
 ```
 a b c d
 4 0 4 2
@@ -188,8 +190,8 @@ a b c d
 0 0 0 0
 ```
 Now consider the 2nd and 3rd columns.
-Merging b and c together, b should take the value of 4, because b is empty/0. Since we shifted c to b
-, c should be 0 in this iteration. b will have isMerged = true
+Merging `b` and `c` together, `b` should take the value of 4, because `b` is empty/0. Since we shifted `c` to `b`
+, `c` should be 0 in this iteration. `b` will have isMerged = true
 ```
 a b c d
 4 4 0 2
@@ -197,11 +199,11 @@ a b c d
 0 0 0 0
 0 0 0 0
 ```
-Now we go back to merging b with a. However, for each swipe we only want a tile to be merged at maximum once IF they changed value. 
+Now we go back to merging `b` with `a`. However, for each swipe we only want a tile to be merged at maximum once IF they changed value. 
 This is why we have the variable isMerged in our tiles. (In this case, a and b will have isMerged = true, so we know not to merge them)
 
-Lastly considering c and d, c wll take the value of d, and d will become 0. Since c changed its value, 
-its isMerged is also true, but for d, its not. Since b has isMerged = true, c will not merge onto b.
+Lastly considering `c` and `d`, `c` wll take the value of `d`, and `d` will become 0. Since `c` changed its value, 
+its isMerged is also true, but for `d`, its not. Since `b` has isMerged = true, `c` will not merge onto `b`.
 So in the end, the swipe was:
 ```
 a b c d           a b c d
@@ -210,7 +212,7 @@ a b c d           a b c d
 0 0 0 0           0 0 0 0
 0 0 0 0           0 0 0 0
 ```
-It is important to know the dependency order depending on which swipe we did (merging b with a, then c with b with a, then d with c with b with a). The example we did before was if we swiped left. If we swiped up for example, the dependency order would be different and it would look like:
+It is important to know the dependency order depending on which swipe we did (merging `b` with `a`, then `c` with `b` with `a`, then `d` with `c` with `b` with `a`). The example we did before was if we swiped left. If we swiped up for example, the dependency order would be different and it would look like:
 ```
 a 2 2 4 2
 b 0 0 0 0
@@ -219,7 +221,7 @@ d 0 0 0 0
 ```
 Thus we should create a function `canMerge()` to test if 2 Tiles (Tile a and Tile b) can merge together.
 Remember that we want to merge Tile b into Tile a, a successful merge is if one of the Tile value changes.
-If Tile a has already merged, then we can't merge a and b.
+If Tile a has already merged, then we can't merge `a` and `b`.
 If Tile a hasn't merged yet, we can have 2 scenarios:
 i) Merging 2 of the same numbers
 ii) Merging a number into an empty tile
@@ -267,7 +269,7 @@ There are different directions we can merge 2 tiles (depends if you swipe left, 
 We need to create functions that implement the logic when we swipe left, right, up or down.
 
 Instead of just merging 2 tiles side by side, we need to loop it through. This can be seen in this example: 
-If we swipe left, we want a to end up with 2 and d to end up with 0.
+If we swipe left, we want `a` to end up with 2 and `d` to end up with 0.
 ```
 a b c d
 0 0 0 2
@@ -275,7 +277,7 @@ a b c d
 0 0 0 0
 0 0 0 0
 ```
-If we only merged once adjacently d with c, then the board will be wrong because we want to push that value to the very left.
+If we only merged once adjacently `d` with `c`, then the board will be wrong because we want to push that value to the very left.
 ```Dart
 // Add this to your code
 void mergeLeft(int r, int c) {
@@ -286,7 +288,7 @@ void mergeLeft(int r, int c) {
   }
 }
 ```
-If we want to mergeRight, we would merge c onto d, then b onto c then onto d, then a onto b then onto c then onto d.
+If we want to mergeRight, we would merge `c` onto `d`, then `b` onto `c` then onto `d`, then `a` onto `b` then onto `c` then onto `d`.
 
 ```Dart
 // Add this to your code
@@ -448,7 +450,7 @@ After we make a merge or move, we want to generate new tiles from empty tiles. W
 First at the end of each move function, lets call the randomEmptyTile().
 Secondly, lets create a function to reset all the tiles back to isMerged = false.  
 
-#### EXERCISE: Implement the function resetMergeState() and add that function and randomEmptyTile() to all the move functions.  
+#### EXERCISE: Implement the function resetMergeState() and add that function and randomEmptyTile(1) to all the move functions.  
 #### Solution:
 ```Dart
 // Edit this to your code
@@ -518,8 +520,7 @@ Secondly, lets create a function to reset all the tiles back to isMerged = false
 ```
 
 ### Step 9: Finishing touches for the game logic. 
-When we initialise the board, we want there to be already 2 starting random Tiles. Hence we should implement that feature in
-initBoard().
+When we initialise the board, we want there to be already 2 starting random Tiles. Hence we should implement that feature in `initBoard()`.
 We also want a scoring system and to know when the game is finished.
 Ideally we should start with a score of 0. Every merge we make, we add that value to our score.
 Finally, we want to know when our game is finished. 
@@ -538,6 +539,7 @@ Finally, we want to know when our game is finished.
         ));
       }
     }
+    // Add these 4 lines in
     // Start the game off with 2 random non-empty Tiles
     randomEmptyTile(2);
     // Start the game off with a score of 0
@@ -563,6 +565,7 @@ Finally, we want to know when our game is finished.
       a.value = a.value + b.value;
       a.isMerged = true;
       b.value = 0;
+      // Add these 2 lines in
       // Add a score
       score += a.value;
     }
