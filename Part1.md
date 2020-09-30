@@ -34,8 +34,8 @@ For simplity, we will be using Visual Studio Code as our code editor for describ
 ## Stage 1: Initialising a board and creating tiles.
 
 ### Step 1: Initialise the game with a board and tile
-#### If you get stuck on any of the parts, you can check the code in lib/game.dart
-On the left you should see a lot of file directories and files. Right click on `lib` and create a new file called `game.dart`. Go inside `game.dart` and lets start coding.
+#### If you get stuck on any of the parts, you can check the code in [lib/game.dart](https://github.com/AndyLinNZ/dsc-2048/blob/master/lib/game.dart).
+(IGNORE if you're on flutlab) On the left you should see a lot of file directories and files. Right click on `lib` and create a new file called `game.dart`. Go inside `game.dart` and lets start coding.
 
 Our 2048 game will have a board, along with tiles on top of it, so it's best that we create classes to represent them.
 Each board will have a number of rows and columns it can take, and a tile will have a specific row and column (think of it like a coordinate), along with the value it represents. We will also add a `canMerge` boolean that will be useful for later.
@@ -121,23 +121,23 @@ class Tile {
 
 ### Step 3: Generating random tiles on the board
 In 2048, there will be Tiles that are empty, and tiles with values. Whenever you make a swipe,
-one of the empty tiles by random will take a value either 2 (90% chance) or 4 (10% chance).
+one of the empty tiles by random will take a value of either 2 (90% chance) or 4 (10% chance).
 
 We need to first indiciate a way to show if a tile is empty or not (ie. Has a number on top). Thus we create an `isEmpty()` function in Tiles.
 A tile will be empty if its value is 0.
 
-Recall that each state in the 2048 board, there will be a new non-empty tile showing a number. We want to randomly
+Recall that in each new state in the 2048 board, there will be 1 new non-empty tile showing a number. We want to randomly
 make a Tile not empty, and that randomly created Tile will either have a value 2 (90% chance) or 4 (10% chance). The chances 
-can be easily changed if we want different chances.
+can be easily changed if we want different ratios.
 
-We want the function to create a certain number of Tiles with values that were initially empty tiles.
-So now we will create `randomEmptyTile(int count)` to generate random tiles with numbers on top for us.
+We want a function to create a certain number of Tiles with values that were initially empty tiles.
+So now we will create `randomEmptyTile(int count)` to generate random tiles with numbers on top for us. `count` will be the number of new random tiles we want to create.
 
 ```Dart
 // Add this to your code
 void randomEmptyTile(int count) {
     List<Tile> allEmptyTiles = List<Tile>();
-    // Loop through all Tiles on the gameboard
+    // Loop through all Tiles on the gameboard to find all the empty tiles
     for (int r = 0; r < row; r++) {
       for (int c = 0; c < column; c++) {
         // If the tile is empty
@@ -158,6 +158,7 @@ void randomEmptyTile(int count) {
       int randIndex = random.nextInt(allEmptyTiles.length);
       // Note here we have a 1/10 chance in getting 0, so there is 10% chance of getting 4 on the Tile.
       allEmptyTiles[randIndex].value = random.nextInt(10) == 0 ? 4 : 2;
+      // The tile is no longer empty, so we remove it from allEmptyTiles
       allEmptyTiles.removeAt(randIndex);
     }
   }
@@ -165,8 +166,7 @@ void randomEmptyTile(int count) {
 ```
 
 ### Step 4: Merging logic (Challenging!)
-Now we are moving onto the merging functions. This is probably the hardest part of this workshop so 
-it is useful to visualise these with examples so you can see and understand the logic.
+Now we are moving onto the merging functions. This is probably the hardest part of this workshop so it is useful to visualise these with examples so you can see and understand the logic.
 
 We consider a merge if there are two tiles, and one of the tiles has their values changed.
 Starting off with an example, swipe left from here:
@@ -179,7 +179,7 @@ a b c d
 0 0 0 0
 ```
 Let a be the 1st row 1st column, let b be 1st row 2nd column, etc.
-We merge a and b together, so now a should become 4 and b should reset to 0. a will have isMerged = true.
+We merge a and b together, so now a should become 4 and b should reset to 0. a was just merged, so it will have isMerged = true.
 ```
 a b c d
 4 0 4 2
@@ -188,7 +188,7 @@ a b c d
 0 0 0 0
 ```
 Now consider the 2nd and 3rd columns.
-Merging b and c together, b should take the value of 4, because b was empty/0. Since we shifted c to b
+Merging b and c together, b should take the value of 4, because b is empty/0. Since we shifted c to b
 , c should be 0 in this iteration. b will have isMerged = true
 ```
 a b c d
@@ -210,15 +210,15 @@ a b c d           a b c d
 0 0 0 0           0 0 0 0
 0 0 0 0           0 0 0 0
 ```
-It is important to know the dependency order depending on which swipe we did. For example, for swiping up it would be:
+It is important to know the dependency order depending on which swipe we did (merging b with a, then c with b with a, then d with c with b with a). The example we did before was if we swiped left. If we swiped up for example, the dependency order would be different and it would look like:
 ```
 a 2 2 4 2
 b 0 0 0 0
 c 0 0 0 0
 d 0 0 0 0
 ```
-Thus we can create a function canMerge() to test if 2 Tiles (a and b) can merge together.
-Remember that we want to merge b into a and a successful merge is if one of the Tile value changes.
+Thus we should create a function `canMerge()` to test if 2 Tiles (Tile a and Tile b) can merge together.
+Remember that we want to merge Tile b into Tile a, a successful merge is if one of the Tile value changes.
 If Tile a has already merged, then we can't merge a and b.
 If Tile a hasn't merged yet, we can have 2 scenarios:
 i) Merging 2 of the same numbers
@@ -249,7 +249,7 @@ void merge(Tile a, Tile b) {
   if (a.isEmpty()) {
     a.value = b.value;
     b.value = 0;
-    // Eg. Merging 2 onto 2
+  // Eg. Merging 2 onto 2
   } else if (a.value == b.value) {
     a.value = a.value + b.value;
     a.isMerged = true;
@@ -266,7 +266,8 @@ void merge(Tile a, Tile b) {
 There are different directions we can merge 2 tiles (depends if you swipe left, right, up or down)
 We need to create functions that implement the logic when we swipe left, right, up or down.
 
-Instead of just merging 2 tiles side by side, we need to loop it through. This can be seen in this example: Swipe left
+Instead of just merging 2 tiles side by side, we need to loop it through. This can be seen in this example: 
+If we swipe left, we want a to end up with 2 and d to end up with 0.
 ```
 a b c d
 0 0 0 2
@@ -333,7 +334,7 @@ We need to loop through every Tile on our gameBoard and shift them left to right
 // Add this to your code
 bool canMoveLeft() {
   for (int r = 0; r < row; r++) {
-    // Careful c shouldn't start at 0
+    // Careful: c shouldn't start at 0
     for (int c = 1; c < column; c++) {
       if (canMerge(gameBoard[r][c], gameBoard[r][c - 1])) {
         return true;
@@ -345,7 +346,7 @@ bool canMoveLeft() {
 ```
 
 For moving right we need to be careful. Before we iterated the tiles from left to right,
-but not we want to iterate through the tiles from right to left.
+but now we want to iterate through the tiles from right to left.
 
 ```Dart
 // Add this to your code
@@ -388,8 +389,7 @@ bool canMoveRight() {
 ```
 
 ### Step 7: Move functions
-We can now start implementing our move functions. It will check if we can move in a certain direction,
-then iterate through each tile and merge in that direction.
+We can now start implementing our move functions. It will check if we can move in a certain direction, then iterate through each tile and merge in that direction.
 
 ```Dart
 // Add this to your code
@@ -444,16 +444,14 @@ void moveDown() {
 ```
 
 ### Step 8: Resetting merges
-After we make a move, we want to generate new tiles from empty tiles. We also want to
-reset all the isMerged from all the Tiles because after we make a swipe we're in a new
-state and the Tiles can be merged again.
+After we make a merge or move, we want to generate new tiles from empty tiles. We also want to reset all the isMerged from all the Tiles because after we make a swipe we're in a new state and the Tiles can be merged again.
 First at the end of each move function, lets call the randomEmptyTile().
 Secondly, lets create a function to reset all the tiles back to isMerged = false.  
 
 #### EXERCISE: Implement the function resetMergeState() and add that function and randomEmptyTile() to all the move functions.  
 #### Solution:
 ```Dart
-// Add this to your code
+// Edit this to your code
   void moveLeft() {
     if (!canMoveLeft()) {
       return;
@@ -463,6 +461,7 @@ Secondly, lets create a function to reset all the tiles back to isMerged = false
         mergeLeft(r, c);
       }
     }
+    // Add these 2 lines in
     randomEmptyTile(1);
     resetMergeState();
   }
@@ -476,6 +475,7 @@ Secondly, lets create a function to reset all the tiles back to isMerged = false
         mergeRight(r, c);
       }
     }
+    // Add these 2 lines in
     randomEmptyTile(1);
     resetMergeState();
   }
@@ -489,6 +489,7 @@ Secondly, lets create a function to reset all the tiles back to isMerged = false
         mergeLeft(r, c);
       }
     }
+    // Add these 2 lines in
     randomEmptyTile(1);
     resetMergeState();
   }
@@ -502,10 +503,11 @@ Secondly, lets create a function to reset all the tiles back to isMerged = false
         mergeDown(r, c);
       }
     }
+    // Add these 2 lines in
     randomEmptyTile(1);
     resetMergeState();
   }
-
+  // Add this function in
   void resetMergeState() {
     for (int r = 0; r < row; r++) {
       for (int c = 0; c < column; c++) {
@@ -522,7 +524,7 @@ We also want a scoring system and to know when the game is finished.
 Ideally we should start with a score of 0. Every merge we make, we add that value to our score.
 Finally, we want to know when our game is finished. 
 ```Dart
-// Add this to your code
+// Edit this to your code
   void initBoard() {
     gameBoard = List<List<Tile>>();
     for (int r = 0; r < row; r++) {
@@ -533,7 +535,6 @@ Finally, we want to know when our game is finished.
           column: c,
           value: 0,
           isMerged: false,
-          isNew: false,
         ));
       }
     }
@@ -574,6 +575,7 @@ Finally, we want to know when our game is finished.
 #### EXERCISE: Implement a function bool gameOver(). HINT: Use previous functions. 
 #### Solution:
 ```Dart
+  // Add this to your code
   bool gameOver() {
     return !canMoveDown() && !canMoveLeft() && !canMoveRight() && !canMoveUp();
   }

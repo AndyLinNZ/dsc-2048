@@ -12,15 +12,15 @@ Part 2 - Integrating the game with Flutter. (Presented in Workshop 6, Week 11, p
 A few resources that may be helpful along the way:
 
 - [Stack Widgets](https://api.flutter.dev/flutter/widgets/Stack-class.html)
-- [Opacity Widfets](https://api.flutter.dev/flutter/widgets/Opacity-class.html)
-- [GestureDetector](https://api.flutter.dev/flutter/widgets/GestureDetector-class.html)
-- [MediaQueryData](https://api.flutter.dev/flutter/widgets/MediaQueryData-class.html)
+- [Opacity Widgets](https://api.flutter.dev/flutter/widgets/Opacity-class.html)
+- [GestureDetector widgets](https://api.flutter.dev/flutter/widgets/GestureDetector-class.html)
+- [MediaQueryData widgets](https://api.flutter.dev/flutter/widgets/MediaQueryData-class.html)
 
-The idea of this workshop is to provide you a step by step guide on how to develop the 2048 game app from start to finish.
-We will also be recording and presenting a live workshop where you can follow along if there are any questions. Please check out our [youtube channel](https://www.youtube.com/channel/UCKouuSTvFtFm_uR4QtKVx0g) for the recording.
+The idea of this repository is to provide you a step by step guide on how to develop the 2048 game app from start to finish.
+We will also be recording and presenting live workshops where you can follow along if there are any questions. Please check out our [youtube channel](https://www.youtube.com/channel/UCKouuSTvFtFm_uR4QtKVx0g) for the recordings.
 
 ## Sections
 
 * [Part 1 - Game logic design](https://github.com/AndyLinNZ/dsc-2048/blob/master/Part1.md)
-* [Part 2 - Integrating the game with Flutter]()
+* [Part 2 - Integrating the game with Flutter](https://github.com/AndyLinNZ/dsc-2048/blob/master/Part2.md)
 
