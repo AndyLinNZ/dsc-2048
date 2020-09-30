@@ -34,6 +34,10 @@ For simplity, we will be using Visual Studio Code as our code editor for describ
 ## Stage 1: Initialising a board and creating tiles.
 
 ### Step 1: Initialise the game with a board and tile
+On the left you should see a lot of file directories and files. Right click on `lib` and create a new file called `game.dart`. Go inside `game.dart` and lets start coding.
+
+Our 2048 game will have a board, along with tiles on top of it, so it's best that we create classes to represent them.
+Each board will have a number of rows and columns it can take, and a tile will have a specific row and column (think of it like a coordinate), along with the value it represents. We will also add a `canMerge` boolean that will be useful for later.
 ```Dart
 // Your code should look like:
 class Board {
@@ -65,11 +69,14 @@ x x x
 x x A
 ```
 
-We can access element A by gameBoard[2][2]
+We can access element A by gameBoard[2][2] (again, think of it like a coordinate system)
 
 Lets also create a helper function to get a specific Tile from the gameBoard. Although we can access it like
-gameBoard[r][c], the code will look much cleaner with a function that does that for us.
+gameBoard[row][column], the code will look much cleaner with a function that does that for us.
 
+So now we will add in a gameBoard that will be a list of list of tiles.
+Then we want to instantiate it (create an instance of it) inside a `initBoard()` function, and initiliase it like a 2d array.
+We will let `r` be a shorthand syntax for rows, and `c` be the shorthand syntax for columns.
 ```Dart
 // Your code should look like:
 class Board {
@@ -115,7 +122,7 @@ class Tile {
 In 2048, there will be Tiles that are empty, and tiles with values. Whenever you make a swipe,
 one of the empty tiles by random will take a value either 2 (90% chance) or 4 (10% chance).
 
-We need to first indiciate a way to show if a tile is empty or not (ie. Has a number on top). Thus we create an isEmpty() function in Tiles.
+We need to first indiciate a way to show if a tile is empty or not (ie. Has a number on top). Thus we create an `isEmpty()` function in Tiles.
 A tile will be empty if its value is 0.
 
 Recall that each state in the 2048 board, there will be a new non-empty tile showing a number. We want to randomly
@@ -123,6 +130,7 @@ make a Tile not empty, and that randomly created Tile will either have a value 2
 can be easily changed if we want different chances.
 
 We want the function to create a certain number of Tiles with values that were initially empty tiles.
+So now we will create `randomEmptyTile(int count)` to generate random tiles with numbers on top for us.
 
 ```Dart
 // Add this to your code
