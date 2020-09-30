@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # two_zero_four_eight_app
 
 A new Flutter project.
@@ -14,3 +15,6 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter, view our
 [online documentation](https://flutter.dev/docs), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+=======
+# dsc-2048
+>>>>>>> 2343122540d2f4153d1671c662215255ef5e5176
