@@ -1,16 +1,22 @@
-# two_zero_four_eight_app
+# DSC Flutter Workshop - 2048 Game App
 
-A new Flutter project.
+## Introduction
 
-## Getting Started
+Welcome to our final project for DSC Unimelb's flutter workshop series! This project will be split into two workshops.
+Part 1 - Game logic design in dart.
+Part 2 - Integrating the game with Flutter.
 
-This project is a starting point for a Flutter application.
+A few resources that may be helpful along the way:
 
-A few resources to get you started if this is your first Flutter project:
+- [Stack Widgets] (https://api.flutter.dev/flutter/widgets/Stack-class.html)
+- [Opacity Widfets] (https://api.flutter.dev/flutter/widgets/Opacity-class.html)
+- [GestureDetector] (https://api.flutter.dev/flutter/widgets/GestureDetector-class.html)
+- [MediaQueryData] (https://api.flutter.dev/flutter/widgets/MediaQueryData-class.html)
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+The idea of this workshop is to provide you a step by step guide on how to develop the 2048 game app from start to finish.
+We will also be recording and presenting a live workshop where you can follow along if there are any questions. Please check out our [youtube channel] (https://www.youtube.com/channel/UCKouuSTvFtFm_uR4QtKVx0g) for the recording.
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Sections
+
+* [Part 1 - Game logic design] ()
+* [Part 2 - Integrating the game with Flutter] ()
