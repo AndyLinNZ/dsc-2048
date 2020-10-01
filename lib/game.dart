@@ -53,7 +53,6 @@ class Board {
       Random random = Random();
       int randIndex = random.nextInt(allEmptyTiles.length);
       allEmptyTiles[randIndex].value = random.nextInt(10) == 0 ? 4 : 2;
-      allEmptyTiles[randIndex].isNew = true;
       allEmptyTiles.removeAt(randIndex);
     }
   }
@@ -232,9 +231,8 @@ class Tile {
   int column;
   int value;
   bool isMerged;
-  bool isNew;
 
-  Tile({this.row, this.column, this.value, this.isMerged, this.isNew});
+  Tile({this.row, this.column, this.value, this.isMerged});
 
   // Returns if the Tile is empty
   bool isEmpty() {

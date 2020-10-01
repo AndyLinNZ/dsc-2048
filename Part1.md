@@ -98,7 +98,7 @@ class Board {
           row: r,
           column: c,
           value: 0,
-          canMerge: false,
+          isMerged: false,
         ));
       }
     }
@@ -167,12 +167,12 @@ void randomEmptyTile(int count) {
   }
 ```
 
-### Step 4: Merging logic (Challenging!)
+### Step 4: Merging logic (Challenging)
 Now we are moving onto the merging functions. This is probably the hardest part of this workshop so it is useful to visualise these with examples so you can see and understand the logic.
 
 We consider a merge if there are two tiles, and one of the tiles has their values changed.
 Starting off with an example, swipe left from here:
-We want a loop that merges tiles in the dependency order left to right. i.e. merge `b` with `a`, then `c` with `b` then with `a`, then `d` with `c` then with `b` then with `a`.
+We want a loop that merges tiles in the dependency order left to right. i.e. merge `b` with `a`, then `c` with `b` with `a`, then `d` with `c` with `b` with `a`.
 ```
 a b c d
 2 2 4 2
@@ -203,7 +203,7 @@ Now we go back to merging `b` with `a`. However, for each swipe we only want a t
 This is why we have the variable isMerged in our tiles. (In this case, a and b will have isMerged = true, so we know not to merge them)
 
 Lastly considering `c` and `d`, `c` wll take the value of `d`, and `d` will become 0. Since `c` changed its value, 
-its isMerged is also true, but for `d`, its not. Since `b` has isMerged = true, `c` will not merge onto `b`.
+its isMerged is also true, but for `d`, its not. Since `b` has isMerged = true and it's value is different to `c`, `c` will not merge onto `b`.
 So in the end, the swipe was:
 ```
 a b c d           a b c d
@@ -214,10 +214,10 @@ a b c d           a b c d
 ```
 It is important to know the dependency order depending on which swipe we did (merging `b` with `a`, then `c` with `b` with `a`, then `d` with `c` with `b` with `a`). The example we did before was if we swiped left. If we swiped up for example, the dependency order would be different and it would look like:
 ```
-a 2 2 4 2
-b 0 0 0 0
-c 0 0 0 0
-d 0 0 0 0
+a 2 0 0 0
+b 2 0 0 0
+c 4 0 0 0
+d 2 0 0 0
 ```
 Thus we should create a function `canMerge()` to test if 2 Tiles (Tile a and Tile b) can merge together.
 Remember that we want to merge Tile b into Tile a, a successful merge is if one of the Tile value changes.
@@ -240,6 +240,7 @@ Using this canMerge function, we can implement the function of merging two tiles
 void merge(Tile a, Tile b) {
   // Eg. Merging a tile into a tile that was merged before already
   if (!canMerge(a, b)) {
+    // Eg. Merging 2 onto a 4 that was merged before
     if (a.isMerged && !b.isEmpty()) {
       b.isMerged = true;
     }
@@ -257,7 +258,7 @@ void merge(Tile a, Tile b) {
     a.isMerged = true;
     b.value = 0;
   }
-  // Eg. Merging a 2 onto a 4
+  // Eg. Merging a 4 onto a 2 that hasen't been merged before
   else {
     b.isMerged = true;
   }
@@ -281,6 +282,7 @@ If we only merged once adjacently `d` with `c`, then the board will be wrong bec
 ```Dart
 // Add this to your code
 void mergeLeft(int r, int c) {
+  // Eg. Merging d with c, then with b, then with a
   while (c > 0) {
     // gameBoard[r][c-1] is Tile a, gameBoard[r][c] is Tile b
     merge(gameBoard[r][c-1], gameBoard[r][c]);
@@ -293,6 +295,7 @@ If we want to mergeRight, we would merge `c` onto `d`, then `b` onto `c` then on
 ```Dart
 // Add this to your code
 void mergeRight(int r, int c) {
+  // Eg. Merging c with d, then b with c with d etc.
   while (c < column - 1) {
     merge(gameBoard[r][c + 1], gameBoard[r][c]);
     c += 1;
@@ -354,6 +357,7 @@ but now we want to iterate through the tiles from right to left.
 // Add this to your code
 bool canMoveRight() {
   for (int r = 0; r < row; r++) {
+    // Iterate in the opposite direction from right to left
     for (int c = column - 2; c >= 0; c--) {
       if (canMerge(gameBoard[r][c + 1], gameBoard[r][c])) {
         return true;
@@ -428,7 +432,7 @@ void moveUp() {
   }
   for (int r = 0; r < row; r++) {
     for (int c = 0; c < column; c++) {
-      mergeLeft(r, c);
+      mergeUp(r, c);
     }
   }
 }
