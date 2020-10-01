@@ -20,8 +20,8 @@ https://dart.dev/
 
 ### Visual Studio Code / Android Studio / Flutlab
 
-https://code.visualstudio.com/download
-https://developer.android.com/studio
+https://code.visualstudio.com/download / 
+https://developer.android.com/studio / 
 https://flutlab.io/
 
 ### Making a Directory
@@ -31,7 +31,7 @@ For simplity, we will be using Visual Studio Code as our code editor for describ
 * First, in Visual Studio Code, choose the directory you want to create your project in through  `Ctrl+K Ctrl+O`. 
 * Then `Ctrl shift p` and select `Flutter: New Project` and then choosing a Flutter project name, such as `two_zero_four_eight`. Alternatively, you can open up your terminal through selecting `Terminal` on the top window bar and clicking `New Terminal`. Then in the terminal, type `flutter create two_zero_four_eight`.
 
-## Stage 1: Initialising a board and creating tiles.
+## Step Guide: Designing the game logic for 2048 app
 
 ### Step 1: Initialise the game with a board and tile
 #### If you get stuck on any of the parts, you can check the code in [lib/game.dart](https://github.com/AndyLinNZ/dsc-2048/blob/master/lib/game.dart).
@@ -53,9 +53,9 @@ class Tile {
   int column;
   int value;
   // You will see the use of this variable in step 4
-  bool canMerge;
+  bool isMerged;
 
-  Tile({this.row, this.column, this.value, this.canMerge});
+  Tile({this.row, this.column, this.value, this.isMerged});
 }
 ```
 
@@ -113,9 +113,9 @@ class Tile {
   int row;
   int column;
   int value;
-  bool canMerge;
+  bool isMerged;
 
-  Tile({this.row, this.column, this.value, this.canMerge});
+  Tile({this.row, this.column, this.value, this.isMerged});
 }
 ```
 
@@ -519,7 +519,7 @@ Secondly, lets create a function to reset all the tiles back to isMerged = false
   }
 ```
 
-### Step 9: Finishing touches for the game logic. 
+### Step 9: Finishing touches for the game logic.
 When we initialise the board, we want there to be already 2 starting random Tiles. Hence we should implement that feature in `initBoard()`.
 We also want a scoring system and to know when the game is finished.
 Ideally we should start with a score of 0. Every merge we make, we add that value to our score.
