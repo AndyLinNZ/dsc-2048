@@ -38,7 +38,7 @@ For simplity, we will be using Visual Studio Code as our code editor for describ
 (IGNORE if you're on flutlab) On the left you should see a lot of file directories and files. Right click on `lib` and create a new file called `game.dart`. Go inside `game.dart` and lets start coding.
 
 Our 2048 game will have a board, along with tiles on top of it, so it's best that we create classes to represent them.
-Each board will have a number of rows and columns it can take, and a tile will have a specific row and column (think of it like a coordinate), along with the value it represents. We will also add a `canMerge` boolean that will be useful for later.
+Each board will have a value of rows and columns it can take, and a tile will have a specific row and column (think of it like a coordinate), along with the value it represents. We will also add a `isMerged` boolean that will be useful for later.
 ```Dart
 // Your code should look like:
 class Board {
@@ -123,15 +123,15 @@ class Tile {
 In 2048, there will be Tiles that are empty, and tiles with values. Whenever you make a swipe,
 one of the empty tiles by random will take a value of either 2 (90% chance) or 4 (10% chance).
 
-We need to first indiciate a way to show if a tile is empty or not (ie. Has a number on top). Thus we create an `isEmpty()` function in Tiles.
+We need to first indiciate a way to show if a tile is empty or not (ie. Has a value on top). Thus we create an `isEmpty()` function in Tiles.
 A tile will be empty if its value is 0.
 
-Recall that in each new state in the 2048 board, there will be 1 new non-empty tile showing a number. We want to randomly
+Recall that in each new state in the 2048 board, there will be 1 new non-empty tile showing a value. We want to randomly
 make a Tile not empty, and that randomly created Tile will either have a value 2 (90% chance) or 4 (10% chance). The chances 
 can be easily changed if we want different ratios.
 
-We want a function to create a certain number of Tiles with values that were initially empty tiles.
-So now we will create `randomEmptyTile(int count)` to generate random tiles with numbers on top for us. `count` will be the number of new random tiles we want to create.
+We want a function to create a certain value of Tiles with values that were initially empty tiles.
+So now we will create `randomEmptyTile(int count)` to generate random tiles with values on top for us. `count` will be the value of new random tiles we want to create.
 
 Our logic will be to find all the tiles on the board that are empty first. Then from all those empty tiles, randomly make 2 tiles not empty by giving them a value of either 2 or 4.
 
@@ -155,7 +155,7 @@ void randomEmptyTile(int count) {
       return;
     }
 
-    // Randomly choose an empty tile to be a newly created Tile "count" number of times.
+    // Randomly choose an empty tile to be a newly created Tile "count" value of times.
     for (int i = 0; i < count; i ++) {
       Random random = Random();
       int randIndex = random.nextInt(allEmptyTiles.length);
@@ -223,8 +223,8 @@ Thus we should create a function `canMerge()` to test if 2 Tiles (Tile a and Til
 Remember that we want to merge Tile b into Tile a, a successful merge is if one of the Tile value changes.
 If Tile a has already merged, then we can't merge `a` and `b`.
 If Tile a hasn't merged yet, we can have 2 scenarios:
-i) Merging 2 of the same numbers
-ii) Merging a number into an empty tile
+i) Merging 2 of the same values
+ii) Merging a value into an empty tile
 
 ```Dart
 // Add this to your code 
@@ -238,11 +238,10 @@ Using this canMerge function, we can implement the function of merging two tiles
 ```Dart
 // Add this to your code
 void merge(Tile a, Tile b) {
-  // Eg. Merging a tile into a tile that was merged before already
+  // Eg. Merging a 2 onto a 4
   if (!canMerge(a, b)) {
-    // Eg. Merging 2 onto a 4 that was merged before
-    if (a.isMerged && !b.isEmpty()) {
-      b.isMerged = true;
+    if (!a.isMerged && !b.isEmpty()) {
+      a.isMerged = true;
     }
     return;
   }
@@ -252,15 +251,16 @@ void merge(Tile a, Tile b) {
   if (a.isEmpty()) {
     a.value = b.value;
     b.value = 0;
-  // Eg. Merging 2 onto 2
+    // Eg. Merging 2 onto 2
   } else if (a.value == b.value) {
     a.value = a.value + b.value;
-    a.isMerged = true;
     b.value = 0;
+    score += a.value;
+    a.isMerged = true;
   }
-  // Eg. Merging a 4 onto a 2 that hasen't been merged before
+  // Every other scenario
   else {
-    b.isMerged = true;
+    a.isMerged = true;
   }
 }
 ```
@@ -586,6 +586,58 @@ Finally, we want to know when our game is finished.
   bool gameOver() {
     return !canMoveDown() && !canMoveLeft() && !canMoveRight() && !canMoveUp();
   }
+```
+
+An extra thing we would like to do now is create an `isNew` variable. This will become more obvious in part 2 and the reasoning will be
+explained there but for now we are going to add an `isNew` that represents if a Tile is newly merged or created. (Teaser: This is used for animations)
+
+1) In the board initBoard() function
+``` Dart
+  void initBoard() {
+    gameBoard = List<List<Tile>>();
+    // Similar to initialising a 2D array
+    for (int r = 0; r < row; r++) {
+      gameBoard.add(List<Tile>());
+      for (int c = 0; c < column; c++) {
+        gameBoard[r].add(Tile(
+          row: r,
+          column: c,
+          value: 0,
+          // isNew here
+          isNew: false,
+          isMerged: false,
+        ));
+      }
+    }
+  }
+```
+2) In the RandomEmptyTile() function
+``` Dart
+    for (int i = 0; i < count; i++) {
+      Random random = Random();
+      int randIndex = random.nextInt(allEmptyTiles.length);
+      allEmptyTiles[randIndex].value = random.nextInt(10) == 0 ? 4 : 2;
+      // isNew here
+      allEmptyTiles[randIndex].isNew = true;
+      allEmptyTiles.removeAt(randIndex);
+    }
+```
+3) The Tile class
+```Dart
+class Tile {
+  int row;
+  int column;
+  int value;
+  bool isMerged = false;
+  bool isNew = false;
+
+  Tile({this.row, this.column, this.value, this.isMerged, this.isNew});
+
+  // Returns if the Tile is empty
+  bool isEmpty() {
+    return value == 0;
+  }
+}
 ```
 
 We are now finally done with the game logic! Now we shall move onto part 2: Flutter UI

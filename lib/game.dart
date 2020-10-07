@@ -19,6 +19,7 @@ class Board {
           column: c,
           value: 0,
           isMerged: false,
+          isNew: false,
         ));
       }
     }
@@ -48,25 +49,26 @@ class Board {
       return;
     }
 
-    // Randomly choose an empty tile to be a newly created Tile "count" number of times
+    // Randomly choose an empty tile to be a newly created Tile "count" value of times
     for (int i = 0; i < count; i++) {
       Random random = Random();
       int randIndex = random.nextInt(allEmptyTiles.length);
       allEmptyTiles[randIndex].value = random.nextInt(10) == 0 ? 4 : 2;
+      allEmptyTiles[randIndex].isNew = true;
       allEmptyTiles.removeAt(randIndex);
     }
   }
 
   bool canMerge(Tile a, Tile b) {
-    return (!a.isMerged && (a.isEmpty() && !b.isEmpty()) ||
-        (!b.isEmpty() && a.value == b.value));
+    return !a.isMerged &&
+        ((a.isEmpty() && !b.isEmpty()) || (!b.isEmpty() && a.value == b.value));
   }
 
   void merge(Tile a, Tile b) {
-    // Eg. Merging a tile into a tile that was merged before already
+    // Eg. Merging a 2 onto a 4
     if (!canMerge(a, b)) {
-      if (a.isMerged && !b.isEmpty()) {
-        b.isMerged = true;
+      if (!a.isMerged && !b.isEmpty()) {
+        a.isMerged = true;
       }
       return;
     }
@@ -79,13 +81,13 @@ class Board {
       // Eg. Merging 2 onto 2
     } else if (a.value == b.value) {
       a.value = a.value + b.value;
-      a.isMerged = true;
       b.value = 0;
       score += a.value;
+      a.isMerged = true;
     }
-    // Eg. Merging a 2 onto a 4
+    // Every other scenario
     else {
-      b.isMerged = true;
+      a.isMerged = true;
     }
   }
 
@@ -230,9 +232,10 @@ class Tile {
   int row;
   int column;
   int value;
-  bool isMerged;
+  bool isMerged = false;
+  bool isNew = false;
 
-  Tile({this.row, this.column, this.value, this.isMerged});
+  Tile({this.row, this.column, this.value, this.isMerged, this.isNew});
 
   // Returns if the Tile is empty
   bool isEmpty() {

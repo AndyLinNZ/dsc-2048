@@ -30,19 +30,23 @@ class _GameBoardWidgetState extends State<GameBoardWidget> {
     super.initState();
     row = 4;
     column = 4;
-    board = Board(row: row, column: column);
+    isDragging = false;
     newGame();
   }
 
   void newGame() {
-    board.initBoard();
-    isGameOver = false;
-    setState(() {});
+    setState(() {
+      board = Board(row: row, column: column);
+      board.initBoard();
+      isGameOver = false;
+    });
   }
 
   void gameOver() {
     setState(() {
-      isGameOver = board.gameOver();
+      if (board.gameOver()) {
+        isGameOver = true;
+      }
     });
   }
 
@@ -227,41 +231,89 @@ class GameBoardGridWidget extends StatelessWidget {
   }
 }
 
+class AnimatedTileWidget extends AnimatedWidget {
+  final Tile tile;
+  final _GameBoardWidgetState state;
+  AnimatedTileWidget(
+      {Key key, this.tile, this.state, Animation<double> animation})
+      : super(key: key, listenable: animation);
+
+  @override
+  Widget build(BuildContext context) {
+    final Animation<double> animation = listenable;
+    double animationValue = animation.value;
+    Size boardSize = state.boardSize();
+    double width = (boardSize.width - (state.column + 1) * state.tilePadding) /
+        state.column;
+    if (tile.value == 0) {
+      return Container();
+    } else {
+      return TileBox(
+        left: (tile.column * width + state.tilePadding * (tile.column + 1)) +
+            width / 2 * (1 - animationValue),
+        top: tile.row * width +
+            state.tilePadding * (tile.row + 1) +
+            width / 2 * (1 - animationValue),
+        size: width * animationValue,
+        color: tileColors.containsKey(tile.value)
+            ? tileColors[tile.value]
+            : tileColors[tileColors.keys.last],
+        text: Text(
+          tile.value.toString(),
+          style: TextStyle(
+            fontSize: 30.0 * animationValue,
+            fontWeight: FontWeight.bold,
+            color: tile.value < 32 ? Colors.grey[600] : Colors.grey[50],
+          ),
+        ),
+      );
+    }
+  }
+}
+
 class TileWidget extends StatefulWidget {
   final Tile tile;
   final _GameBoardWidgetState state;
   TileWidget({this.tile, this.state});
-  @override
   _TileWidgetState createState() => _TileWidgetState();
 }
 
-class _TileWidgetState extends State<TileWidget> {
-  Tile tile;
-  _GameBoardWidgetState state;
+class _TileWidgetState extends State<TileWidget>
+    with SingleTickerProviderStateMixin {
+  AnimationController controller;
+  Animation<double> animation;
 
   @override
-  void initState() {
-    tile = widget.tile;
-    state = widget.state;
+  initState() {
     super.initState();
+    controller = AnimationController(
+      duration: Duration(
+        milliseconds: 200,
+      ),
+      vsync: this,
+    );
+    animation = new Tween(begin: 0.0, end: 1.0).animate(controller);
+  }
+
+  dispose() {
+    controller.dispose();
+    super.dispose();
+    widget.tile.isNew = false;
   }
 
   @override
   Widget build(BuildContext context) {
-    if (tile.isEmpty()) {
-      return Container();
+    if (widget.tile.isNew && !widget.tile.isEmpty()) {
+      controller.reset();
+      controller.forward();
+      widget.tile.isNew = false;
+    } else {
+      controller.animateTo(1.0);
     }
-    Size size = state.boardSize();
-    double tileWidth =
-        (size.width - (state.column + 1) * state.tilePadding) / (state.column);
-    return TileBox(
-      left: tile.column * tileWidth + state.tilePadding * (tile.column + 1),
-      top: tile.row * tileWidth + state.tilePadding * (tile.row + 1),
-      size: tileWidth,
-      text: Text(tile.value.toString()),
-      color: tileColors.containsKey(tile.value)
-          ? tileColors[tile.value]
-          : tileColors[tileColors.keys.last],
+    return AnimatedTileWidget(
+      tile: widget.tile,
+      state: widget.state,
+      animation: animation,
     );
   }
 }
